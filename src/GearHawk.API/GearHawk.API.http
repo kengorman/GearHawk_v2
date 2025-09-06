@@ -1,0 +1,8 @@
+@GearHawk.API_HostAddress = http://localhost:5041
+@GearHawk.API_HttpsAddress = https://localhost:7060
+
+### Test HTTP endpoint
+GET {{GearHawk.API_HostAddress}}/weatherforecast
+
+### Test HTTPS endpoint
+GET {{GearHawk.API_HttpsAddress}}/weatherforecastBroken
