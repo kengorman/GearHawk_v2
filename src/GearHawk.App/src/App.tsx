@@ -1,12 +1,10 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from './store/hooks'
 import { logout } from './store/slices/authSlice'
 import { increment, decrement, reset } from './store/slices/counterSlice'
 import { useLoginMutation, useGetUserProfileQuery } from './store/api/gearHawkApi'
 import { useMsal } from '@azure/msal-react'
-import { InteractionRequiredAuthError, InteractionType } from '@azure/msal-browser'
-import { loginRequest, protectedResources } from './config/authConfig'
+import { loginRequest } from './config/authConfig'
 import './App.css'
 
 function App() {
@@ -38,25 +36,30 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <header className="App-header">
-          <h1>GearHawk App</h1>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/counter">Counter</Link>
-            <Link to="/profile">Profile</Link>
-          </nav>
-          <div className="auth-section">
-            {isMsalAuthenticated ? (
-              <div>
-                <span>Welcome, {user?.name || (profileData as any)?.name || accounts[0]?.name || 'User'}!</span>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            ) : (
-              <button onClick={handleLogin} disabled={loading}>
-                {loading ? 'Logging in...' : 'Login with Microsoft Entra'}
-              </button>
-            )}
-            {error && <div className="error">{error}</div>}
+        <header className="site-header">
+          <div className="container header-inner">
+            <div className="brand">
+              <span className="brand-logo" aria-hidden="true"></span>
+              <span className="brand-name">Gear Hawk</span>
+            </div>
+            <nav className="primary-nav" aria-label="Primary">
+              <Link to="/">Home</Link>
+              <Link to="/counter">Counter</Link>
+              <Link to="/profile">Profile</Link>
+            </nav>
+            <div className="auth-actions">
+              {isMsalAuthenticated ? (
+                <>
+                  <span className="visually-hidden">Signed in as </span>
+                  <span>{user?.name || (profileData as any)?.name || accounts[0]?.name || 'User'}</span>
+                  <button className="btn" onClick={handleLogout}>Logout</button>
+                </>
+              ) : (
+                <button className="btn primary" onClick={handleLogin} disabled={loading}>
+                  {loading ? 'Signing in…' : 'Sign in'}
+                </button>
+              )}
+            </div>
           </div>
         </header>
 
@@ -67,6 +70,12 @@ function App() {
             <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
+
+        <footer className="site-footer">
+          <div className="container">
+            <small>© {new Date().getFullYear()} Gear Hawk. All rights reserved.</small>
+          </div>
+        </footer>
       </div>
     </Router>
   )
@@ -74,22 +83,40 @@ function App() {
 
 function Home() {
   return (
-    <div className="home">
-      <h2>Hello World from GearHawk!</h2>
-      <p>Welcome to your new React application with Redux Toolkit and RTK Query.</p>
-      <div className="features">
-        <h3>Features included:</h3>
-        <ul>
-          <li>✅ Vite for fast development</li>
-          <li>✅ TypeScript for type safety</li>
-          <li>✅ Redux Toolkit for state management</li>
-          <li>✅ RTK Query for API caching</li>
-          <li>✅ React Router for navigation</li>
-          <li>✅ Microsoft Entra authentication ready</li>
-          <li>✅ Axios for API calls</li>
-        </ul>
-      </div>
-    </div>
+    <>
+      <section className="hero">
+        <div className="container">
+          <span className="hero-eyebrow">Mobile-first</span>
+          <h1 className="hero-title">Manage gear and rig checks with speed and confidence</h1>
+          <p className="hero-subtitle">
+            Gear Hawk brings inventory, inspections, and reporting into one streamlined workflow.
+          </p>
+          <div className="hero-cta">
+            <Link className="btn primary" to="/profile">Get started</Link>
+            <Link className="btn" to="/counter">Try the demo</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="features">
+        <div className="container">
+          <div className="feature-grid">
+            <article className="feature-card">
+              <h3>Fast inventory</h3>
+              <p>Quickly add, find, and update gear from any device.</p>
+            </article>
+            <article className="feature-card">
+              <h3>Rig checks</h3>
+              <p>Standardized checklists ensure safety and compliance.</p>
+            </article>
+            <article className="feature-card">
+              <h3>Reports</h3>
+              <p>Share real-time insights with your team and stakeholders.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
 
