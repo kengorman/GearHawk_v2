@@ -23,7 +23,7 @@ function App() {
     try {
       const active = accounts[0]
       if (!active) {
-        await instance.loginPopup(loginRequest as any)
+        await instance.loginRedirect(loginRequest as any)
       }
     } catch (error) {
       console.error('Login failed:', error)
@@ -31,7 +31,7 @@ function App() {
   }
 
   const handleLogout = () => {
-    instance.logoutPopup({ mainWindowRedirectUri: window.location.origin })
+    instance.logoutRedirect({ postLogoutRedirectUri: window.location.origin })
     dispatch(logout())
   }
 

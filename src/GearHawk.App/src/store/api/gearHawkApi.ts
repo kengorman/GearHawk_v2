@@ -25,7 +25,7 @@ export interface LoginResponse {
 
 // Create the API slice
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api',
+  baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7060/api',
 })
 
 const baseQueryWithMsal: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
@@ -43,12 +43,39 @@ const baseQueryWithMsal: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQuery
       })
       const accessToken = tokenResponse?.accessToken
       if (accessToken) {
-        if (typeof args === 'string') {
-          adjustedArgs = { url: args, headers: new Headers() }
-        } else {
-          adjustedArgs = { ...args, headers: new Headers(args.headers as any) }
+        const mergeHeaders = (
+          input?: Headers | string[][] | Record<string, string | undefined>
+        ): Record<string, string> => {
+          const out: Record<string, string> = {}
+          if (!input) return out
+          if (input instanceof Headers) {
+            input.forEach((v, k) => {
+              if (v) out[k] = v
+            })
+          } else if (Array.isArray(input)) {
+            input.forEach(([k, v]) => {
+              if (v) out[k] = v
+            })
+          } else {
+            Object.entries(input).forEach(([k, v]) => {
+              if (v) out[k] = v
+            })
+          }
+          return out
         }
-        ;(adjustedArgs as FetchArgs).headers!.set('authorization', `Bearer ${accessToken}`)
+
+        if (typeof args === 'string') {
+          adjustedArgs = {
+            url: args,
+            headers: { authorization: `Bearer ${accessToken}` },
+          }
+        } else {
+          const existing = mergeHeaders((args as FetchArgs).headers)
+          adjustedArgs = {
+            ...(args as FetchArgs),
+            headers: { ...existing, authorization: `Bearer ${accessToken}` },
+          }
+        }
       }
     }
   } catch (err: any) {
@@ -57,18 +84,12 @@ const baseQueryWithMsal: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQuery
       try {
         const account = msalInstance.getActiveAccount() || msalInstance.getAllAccounts()[0]
         if (account) {
-          const popupResult = await msalInstance.acquireTokenPopup({
+          await msalInstance.acquireTokenRedirect({
             account,
             scopes: protectedResources.gearHawkApi.scopes as string[],
           })
-          if (popupResult?.accessToken) {
-            if (typeof args === 'string') {
-              adjustedArgs = { url: args, headers: new Headers() }
-            } else {
-              adjustedArgs = { ...args, headers: new Headers(args.headers as any) }
-            }
-            ;(adjustedArgs as FetchArgs).headers!.set('authorization', `Bearer ${popupResult.accessToken}`)
-          }
+          // After redirect returns, the original request can be retried by the caller if needed
+          // Here we simply proceed without token; consumers should re-trigger the request.
         }
       } catch (popupErr) {
         console.warn('MSAL interactive acquisition failed', popupErr)
@@ -109,7 +130,7 @@ export const gearHawkApi = createApi({
 
     getInventoryById: builder.query<any, string>({
       query: (id) => `/inventory/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Inventory', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Inventory', id }],
     }),
 
     // Example report endpoints
@@ -134,7 +155,7 @@ export const gearHawkApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Inventory', id },
         'Inventory'
       ],
