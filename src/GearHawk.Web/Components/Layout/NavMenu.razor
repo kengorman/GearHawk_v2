@@ -1,17 +1,7 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">GearHawk.Web</a>
-        <div class="d-flex align-items-center gap-2">
-            <AuthorizeView>
-                <Authorized Context="ctx">
-                    <span class="text-light">@ctx.User?.Identity?.Name</span>
-                    <a class="btn btn-sm btn-outline-light" href="/MicrosoftIdentity/Account/SignOut">Sign out</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a class="btn btn-sm btn-outline-light" href="/MicrosoftIdentity/Account/SignIn">Sign in</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
+        
     </div>
 </div>
 

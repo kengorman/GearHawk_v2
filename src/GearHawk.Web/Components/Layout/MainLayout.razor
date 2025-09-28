@@ -8,6 +8,19 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <span style="margin-left:auto"></span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="setRadzenTheme('material')">Material</button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="setRadzenTheme('materialDark')" style="margin-left:8px">Dark</button>
+            <span style="margin-left:8px"></span>
+            <AuthorizeView>
+                <Authorized Context="ctx">
+                    <span class="text-dark">@ctx.User?.Identity?.Name</span>
+                    <a class="btn btn-sm btn-outline-secondary" href="/MicrosoftIdentity/Account/SignOut" style="margin-left:8px">Sign out</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="btn btn-sm btn-outline-secondary" href="/MicrosoftIdentity/Account/SignIn">Sign in</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">

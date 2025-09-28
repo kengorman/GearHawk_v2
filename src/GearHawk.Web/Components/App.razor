@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="GearHawk.Web.styles.css" />
-    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default.css" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css" />
+    <link id="radzen-theme" rel="stylesheet" href="_content/Radzen.Blazor/css/material.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
@@ -16,6 +17,17 @@
 <body>
     <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        window.setRadzenTheme = function(theme) {
+            var link = document.getElementById('radzen-theme');
+            if (!link) return;
+            const map = {
+                material: '_content/Radzen.Blazor/css/material.css',
+                materialDark: '_content/Radzen.Blazor/css/material-dark.css'
+            };
+            link.href = map[theme] || map.material;
+        };
+    </script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 </body>
 
