@@ -1,7 +1,17 @@
 ﻿<CascadingAuthenticationState>
     <Router AppAssembly="typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <LayoutView Layout="typeof(Layout.MainLayout)">
+                        <div class="content px-4">
+                            <h1>Not authorized</h1>
+                            <p>You need to sign in to access this page.</p>
+                            <p><a class="btn btn-primary" href="/MicrosoftIdentity/Account/SignIn">Sign in</a></p>
+                        </div>
+                    </LayoutView>
+                </NotAuthorized>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="routeData" Selector="h1" />
         </Found>
     </Router>

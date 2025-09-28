@@ -2,6 +2,7 @@ using GearHawk.Web.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,10 @@ builder.Services
     .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"))
     .EnableTokenAcquisitionToCallDownstreamApi()
-    .AddDownstreamWebApi("GearHawkApi", builder.Configuration.GetSection("Api"))
     .AddInMemoryTokenCaches();
+
+// Register downstream API configuration using Microsoft.Identity.Abstractions
+builder.Services.AddDownstreamApi("GearHawkApi", builder.Configuration.GetSection("Api"));
 
 builder.Services.AddAuthorization();
 
@@ -24,6 +27,9 @@ builder.Services
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Radzen services
+builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 
