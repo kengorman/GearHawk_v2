@@ -2,9 +2,13 @@ using GearHawk.Web.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Microsoft.Identity.Abstractions;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Aspire ServiceDefaults for discovery/OTel/health/resilience
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services
@@ -13,8 +17,14 @@ builder.Services
     .EnableTokenAcquisitionToCallDownstreamApi()
     .AddInMemoryTokenCaches();
 
-// Register downstream API configuration using Microsoft.Identity.Abstractions
-builder.Services.AddDownstreamApi("GearHawkApi", builder.Configuration.GetSection("Api"));
+// Ensure the named HttpClient used by DownstreamApi has Aspire service discovery
+builder.Services.AddHttpClient("GearHawkApi").AddServiceDiscovery();
+
+builder.Services.AddDownstreamApi("GearHawkApi", options =>
+{
+    options.BaseUrl = "https://gearhawk-api";
+    options.Scopes = builder.Configuration.GetSection("Api:Scopes").Get<string[]>() ?? Array.Empty<string>();
+});
 
 builder.Services.AddAuthorization();
 
@@ -54,5 +64,8 @@ app.MapRazorComponents<App>()
 
 app.MapRazorPages();
 app.MapControllers();
+
+// Aspire health endpoints in Development
+app.MapDefaultEndpoints();
 
 app.Run();

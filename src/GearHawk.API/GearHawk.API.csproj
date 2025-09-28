@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\libs\GearHawk.Core\GearHawk.Core.csproj" />
+    <ProjectReference Include="..\GearHawk.ServiceDefaults\GearHawk.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

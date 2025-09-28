@@ -4,6 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Aspire ServiceDefaults
+builder.AddServiceDefaults();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -62,6 +65,9 @@ app.UseHttpsRedirection();
 app.UseCors("DevCors");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Aspire health endpoints in Development
+app.MapDefaultEndpoints();
 
 app.MapControllers();
 

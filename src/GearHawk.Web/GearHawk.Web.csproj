@@ -15,4 +15,8 @@
     <PackageReference Include="Radzen.Blazor" Version="7.4.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GearHawk.ServiceDefaults\GearHawk.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 </Project>

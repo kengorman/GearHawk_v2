@@ -2,13 +2,21 @@
 {
     public sealed class ConnectionUtils
     {
-        private static string CONN_STRING = @"Server=tcp:ia9479ho1u.database.windows.net,1433;Initial Catalog=GearHawk;Persist Security Info=False;User ID=gormank;Password=Offramp1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=230";
+        private const string ENV_VAR_NAME = "ConnectionStrings__GearHawk";
+        private const string DEFAULT_CONN_STRING = "";
 
         /// <summary>
-        /// The only access point to retrieve a connection string
-        /// to the current database.
+        /// Retrieve a connection string to the current database using environment variable
+        /// injected by the host or app configuration. Falls back to empty string by default.
         /// </summary>
         /// <returns>connection string to the current sql database</returns>
-        public static string GetConnString() => CONN_STRING;
+        public static string GetConnString()
+        {
+            var fromEnv = System.Environment.GetEnvironmentVariable(ENV_VAR_NAME);
+            if (!string.IsNullOrWhiteSpace(fromEnv))
+                return fromEnv!;
+
+            return DEFAULT_CONN_STRING;
+        }
     }
 }
