@@ -109,6 +109,24 @@ main { flex: 1; }
 .feature-card h3 { margin: 0 0 6px; font-size: 16px; }
 .feature-card p { margin: 0; color: var(--gh-text-muted); font-size: 14px; }
 
+/* Inventory Home */
+.inv-header { padding: 16px; border-bottom: 1px solid var(--gh-border); }
+.inv-title { margin: 0; font-size: 18px; }
+.inv-grid { padding: 16px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+.inv-card { background: rgba(15,23,42,0.6); border: 1px solid var(--gh-border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.inv-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #0b1220; display: block; }
+.inv-body { padding: 12px; }
+.inv-name { margin: 0 0 6px; font-size: 16px; }
+.inv-desc { margin: 0 0 10px; color: var(--gh-text-muted); font-size: 14px; }
+.inv-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.badge { border: 1px solid var(--gh-border); border-radius: 999px; padding: 4px 8px; font-size: 12px; color: var(--gh-text-muted); }
+.badge.warn { border-color: #f59e0b; color: #fbbf24; }
+.badge.danger { border-color: #ef4444; color: #f87171; }
+.qty { margin-left: auto; font-weight: 700; }
+
+@media (min-width: 640px) { .inv-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .inv-grid { grid-template-columns: repeat(3, 1fr); } }
+
 @media (min-width: 640px) {
   .hero { padding: 56px 0 32px; }
   .hero-title { font-size: 38px; }

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import InventoryHome from './pages/InventoryHome'
 import { useAppDispatch, useAppSelector } from './store/hooks'
 import { logout } from './store/slices/authSlice'
 import { increment, decrement, reset } from './store/slices/counterSlice'
@@ -11,7 +12,7 @@ function App() {
   const dispatch = useAppDispatch()
   const { isAuthenticated, user, loading, error } = useAppSelector((state) => state.auth)
   const { count } = useAppSelector((state) => state.counter)
-  
+
   const [login] = useLoginMutation()
   const { instance, accounts } = useMsal()
   const isMsalAuthenticated = accounts.length > 0
@@ -68,6 +69,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/counter" element={<Counter />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/inventory/:id?" element={<InventoryHome />} />
           </Routes>
         </main>
 
@@ -92,7 +94,7 @@ function Home() {
             Gear Hawk brings inventory, inspections, and reporting into one streamlined workflow.
           </p>
           <div className="hero-cta">
-            <Link className="btn primary" to="/profile">Get started</Link>
+            <Link className="btn primary" to="/inventory/-1">Get started</Link>
             <Link className="btn" to="/counter">Try the demo</Link>
           </div>
         </div>

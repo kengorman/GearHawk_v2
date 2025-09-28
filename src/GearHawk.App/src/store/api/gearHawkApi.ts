@@ -23,6 +23,26 @@ export interface LoginResponse {
   message?: string
 }
 
+// Inventory types (server uses mixed casing: id is lower-case, others PascalCase)
+export interface InventoryNodeDto {
+  id: number
+  Name: string
+  Description: string
+  IsInventory: boolean
+  CustomerCode: string
+  OutOfService: boolean
+  NeedsRepair: boolean
+  NeedsResupply: boolean
+  Quantity: string
+  MinimumQuantity: string
+  ChildNodesExt: InventoryNodeDto[]
+}
+
+export interface InventoryHomeResult {
+  root: InventoryNodeDto
+  userId?: string | null
+}
+
 // Create the API slice
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://localhost:7060/api',
@@ -128,6 +148,24 @@ export const gearHawkApi = createApi({
       providesTags: ['Inventory'],
     }),
 
+    // Inventory Home (node + direct children)
+    getInventoryHome: builder.query<InventoryHomeResult, number | void>({
+      query: (id) => `/InventoryHome?id=${id ?? 1}`,
+      transformResponse: (response: any): InventoryHomeResult => {
+        // Response shape: { message: string, userId }
+        // message is a JSON string of string array; first element is the node JSON
+        try {
+          const outerArray: string[] = JSON.parse(response?.message ?? '[]')
+          const nodeJson = outerArray?.[0] ?? '{}'
+          const root: InventoryNodeDto = JSON.parse(nodeJson)
+          return { root, userId: response?.userId ?? null }
+        } catch (e) {
+          return { root: { id: -1, Name: '', Description: '', IsInventory: false, CustomerCode: '', OutOfService: false, NeedsRepair: false, NeedsResupply: false, Quantity: '0', MinimumQuantity: '0', ChildNodesExt: [] }, userId: response?.userId ?? null }
+        }
+      },
+      providesTags: ['Inventory'],
+    }),
+
     getInventoryById: builder.query<any, string>({
       query: (id) => `/inventory/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Inventory', id }],
@@ -176,6 +214,7 @@ export const {
   useLoginMutation,
   useGetUserProfileQuery,
   useGetInventoryQuery,
+  useGetInventoryHomeQuery,
   useGetInventoryByIdQuery,
   useGetReportsQuery,
   useCreateInventoryItemMutation,

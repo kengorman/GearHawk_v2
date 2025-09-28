@@ -1,0 +1,26 @@
+@page "/profile"
+@attribute [Authorize]
+
+<h1>User profile</h1>
+
+<AuthorizeView>
+    <Authorized Context="context">
+        @if (context.User?.Identity?.IsAuthenticated == true)
+        {
+            <ul>
+                @foreach (var claim in context.User!.Claims)
+                {
+                    <li>@claim.Type: @claim.Value</li>
+                }
+            </ul>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not signed in.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+}
+
+

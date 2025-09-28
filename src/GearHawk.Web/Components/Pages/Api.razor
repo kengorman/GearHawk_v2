@@ -1,0 +1,35 @@
+@page "/api"
+@attribute [Authorize]
+@inject Microsoft.Identity.Abstractions.IDownstreamApi DownstreamApi
+
+<h1>API test</h1>
+
+<button class="btn btn-primary" @onclick="CallProtectedApi">Call Protected API</button>
+
+@if (!string.IsNullOrEmpty(_result))
+{
+    <pre>@_result</pre>
+}
+
+@code {
+    private string _result = string.Empty;
+
+    private async Task CallProtectedApi()
+    {
+        try
+        {
+            var response = await DownstreamApi.CallApiForUserAsync("GearHawkApi", options =>
+            {
+                options.RelativePath = "api/protected";
+            });
+
+            _result = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            _result = ex.Message;
+        }
+    }
+}
+
+
