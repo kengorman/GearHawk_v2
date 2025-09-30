@@ -11,7 +11,7 @@ builder.AddServiceDefaults();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", pb =>
-        pb.WithOrigins("http://localhost:5173", "https://localhost:7100", "http://localhost:7100")
+        pb.WithOrigins("https://localhost:7100", "http://localhost:7100")
           .AllowAnyHeader()
           .AllowAnyMethod());
 });
